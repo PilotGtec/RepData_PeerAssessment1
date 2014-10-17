@@ -12,8 +12,8 @@ This assignment requires us to generate a single **R markdown** document generat
 
 
 ## Setting Default Global Options
-Here, four deafult global chunk options are set and defined as follows: `echo = TRUE`, `results = 'hold'`, 
-`message = FALSE`, and `warning = FALSE`. These are implement in the **R** code chunk below.
+Here, four default global chunk options are set and defined as follows: `echo = TRUE`, `results = 'hold'`, 
+`message = FALSE`, and `warning = FALSE`. These are implemented in the **R** code chunk below.
 
 ```r
 library(knitr)
