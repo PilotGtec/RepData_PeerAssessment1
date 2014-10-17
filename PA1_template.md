@@ -12,7 +12,7 @@ This assignment requires us to generate a single **R markdown** document generat
 
 
 ## Setting Default Global Options
-Here, four default global chunk options are set and defined as follows: `echo = TRUE`, `results = 'hold'`, 
+For this document, four default global chunk options are set: `echo = TRUE`, `results = 'hold'`, 
 `message = FALSE`, and `warning = FALSE`. These are implemented in the **R** code chunk below.
 
 ```r
@@ -26,7 +26,7 @@ Here, we work with the [Activity monitoring data][3] provided in the course.
 [3]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip "Activity monitoring data" 
 
 ####Loading Data
-In this section, we load the raw *Activity Monitoring Data* provided in this project. The dataset has been downloaded and is located in the same location as this **R markdown** file. Note that for loading the data, the chunk option `cache = TRUE` has been set.
+In this section, we load the raw *Activity Monitoring Data*. The dataset has been downloaded and unzipped and is located in the same location as this **R markdown (.Rmd)** file. Note that for loading the data, the chunk option `cache = TRUE`.
 
 
 ```r
@@ -38,7 +38,7 @@ activity <- read.csv(fileName)
 ##Data Analysis
 
 
-Let's take a peek at the dataset
+Taking a peek at the data set, we have
 
 
 ```r
@@ -95,7 +95,7 @@ head(spd.total)
 ## 6 2012-10-07 11015
 ```
 
-Note that for this step, all `NA` values have been removed. We then take the mean of the steps values in `spd.total`. 
+Note that all `NA` values were removed (`na.rm=TRUE`) in the aggregation. We then take the mean of the steps values in `spd.total`. 
 
 
 ```r
@@ -154,7 +154,7 @@ nas <- sum(is.na(activity$steps))
 
 This gives a total of 2304 observations in the dataset that have `NA` entries under `steps`.
 
-The idea is to replace the `NA` values with synthetic ones or *estimates*. Since each of the observation indicates a particular interval $i$, we shall replace the `NA` values with the expected number of steps for $i$. 
+The idea is to replace the `NA` values with synthetic ones or *estimates*. Since each of the observation indicates a particular interval *i*, we shall replace the `NA` values with the expected number of steps for *i*. 
 
 Below, we create a copy of the original `activity` data frame and call it `activity2`. In this new data frame, we impute the mean values to the `NA` entries under `steps`.
 
@@ -236,8 +236,7 @@ plot( p2, col=rgb(.2,.2,.2,alpha=0.5), xlim=c(-250,25000), ylim = c(0,12), add=T
 
 ![plot of chunk overlayinghists](figure/overlayinghists.png) 
 
-Except for a noticeable spike at around the 23rd bin, there is a very good agreement between the two sets of data. For `activity2`, the mean and median of the number of total steps per day is 10766 and 10766, respectively. For `activity`, the values are 10766 and 10765, respectively. Results show that by imputing the `NA` values with the average values taken from *typical day* information, 
-the mean for the total number of steps per day is retained, while the median is slightly shifted.
+Except for a noticeable spike at around the 23rd bin in the `activity2` histogram (lighter gray), there is a very good agreement between the two sets of data. For `activity2`, the mean and median of the number of total steps per day is 10766 and 10766, respectively. For `activity`, the values are 10766 and 10765, respectively. Results show that by imputing the average values taken from *typical day* information with the `NA` values, the mean for the total number of steps per day is retained, while the median is slightly shifted.
 
 ####Weekend vs Weekday Activity Patterns
 
@@ -320,7 +319,7 @@ ggplot(steps.per.interval.bydaytype, aes(x=interval, y=steps)) +
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
 
-What we observe here is that for weekdays, a prominent peak is present. This suggests the presence of a *routine* wherein there is a significant number of steps involved only at a certain interval of a day on weekdays. This could be due to the fact that the individual is transiting from home to work; and, once the individual reaches his/her office, *relatively* minimal walking as been done.  On weekends, however, the walking is more spread across intervals suggesting the absence of a *routine*. Finally, more steps per day are produced, on the average, on weekends than on weekdays.
+What we observe here is that for weekdays, a prominent peak is present. This suggests the presence of a *routine* wherein there is a significant number of steps involved only at a certain interval of a day on weekdays. This could be due to the fact that the individual is transiting from home to work; and, once the individual reaches his/her office, *relatively* minimal walking was done.  On weekends, however, the walking is more spread across intervals suggesting the absence of a *routine*. Finally, more steps per day are produced, on the average, on weekends than on weekdays.
 
 
 ```r
