@@ -14,7 +14,8 @@ This assignment requires us to generate a single **R markdown** document generat
 ## Setting Default Global Options
 Here, four deafult global chunk options are set and defined as follows: `echo = TRUE`, `results = 'hold'`, 
 `message = FALSE`, and `warning = FALSE`. These are implement in the **R** code chunk below.
-```{r globals, echo=TRUE}
+
+```r
 library(knitr)
 opts_chunk$set(echo = TRUE, results = 'hold', message = FALSE, warning = FALSE)
 ```
@@ -27,7 +28,8 @@ Here, we work with the [Activity monitoring data][3] provided in the course.
 ####Loading Data
 In this section, we load the raw *Activity Monitoring Data* provided in this project. The dataset has been downloaded and is located in the same location as this **R markdown** file. Note that for loading the data, the chunk option `cache = TRUE` has been set.
 
-```{r loaddata, cache=TRUE}
+
+```r
 fileName <- "activity.csv"
 activity <- read.csv(fileName)
 ```
@@ -38,15 +40,38 @@ activity <- read.csv(fileName)
 
 Let's take a peek at the dataset
 
-```{r datahead}
+
+```r
 head(activity)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 
 and its summary.
 
 
-```{r datasummary}
+
+```r
 summary(activity)
+```
+
+```
+##      steps               date          interval   
+##  Min.   :  0.0   2012-10-01:  288   Min.   :   0  
+##  1st Qu.:  0.0   2012-10-02:  288   1st Qu.: 589  
+##  Median :  0.0   2012-10-03:  288   Median :1178  
+##  Mean   : 37.4   2012-10-04:  288   Mean   :1178  
+##  3rd Qu.: 12.0   2012-10-05:  288   3rd Qu.:1766  
+##  Max.   :806.0   2012-10-06:  288   Max.   :2355  
+##  NA's   :2304    (Other)   :15840
 ```
 
 
@@ -54,66 +79,87 @@ summary(activity)
 
 To obtain the mean total number of steps taken per day, we first sum up all the steps per day and store the results in `spd.total`. 
 
-```{r spdtotal}
+
+```r
 spd.total <- aggregate(steps~date, activity, sum, na.rm=TRUE)
 head(spd.total)
 ```
 
+```
+##         date steps
+## 1 2012-10-02   126
+## 2 2012-10-03 11352
+## 3 2012-10-04 12116
+## 4 2012-10-05 13294
+## 5 2012-10-06 15420
+## 6 2012-10-07 11015
+```
+
 Note that for this step, all `NA` values have been removed. We then take the mean of the steps values in `spd.total`. 
 
-```{r meanspd}
+
+```r
 mean.steps.per.day <- mean(spd.total$steps)
 median.steps.per.day <- median(spd.total$steps)
 ```
 
-This gives us the *mean total number of steps taken per day*, which is `r as.integer(mean.steps.per.day)`. The median is 
-`r median.steps.per.day`.
+This gives us the *mean total number of steps taken per day*, which is 10766. The median is 
+10765.
 
 **Histogram**
 
 Below, we plot the histogram of the total number of steps per day.
 
-```{r histogramsteps}
+
+```r
 library(ggplot2)
 ggplot(data=spd.total, aes(x=steps)) + geom_histogram(binwidth=500) +
     scale_y_continuous(breaks=seq(0,12,2)) +
     labs(x="Total Number of Steps per Day", y ="Frequency")
 ```
 
+![plot of chunk histogramsteps](figure/histogramsteps.png) 
+
 
 ####Average Daily Activity Pattern
 
 In this section, we evaluate the average daily activity pattern of the subject by looking at the mean number of steps produced in each of the 5-min interval across the days. To do this, we aggregate the dataset per interval and take the mean of the steps per interval. We then plot the mean values per interval.
 
-```{r agginterval}
+
+```r
 steps.per.interval <- aggregate(steps~interval, activity, mean, na.rm=TRUE)
 ggplot(steps.per.interval, aes(interval, steps)) + geom_line() +
     labs(x="Interval", y ="Mean Number of Steps") 
 ```
 
+![plot of chunk agginterval](figure/agginterval.png) 
+
 To evaluate the $n$th interval at which a maximum is observed, the following is implemented.
 
-```{r maxsteps}
+
+```r
 interval.with.max.steps <- steps.per.interval[which.max(steps.per.interval$steps),]$interval
 ```
 
-The interval with the maximum number of average steps in a day is `r interval.with.max.steps`, i.e. **the `r interval.with.max.steps/5 +1`th 5min-interval has the most number of steps** with a mean of `r steps.per.interval[which.max(steps.per.interval$steps),]$steps` steps.
+The interval with the maximum number of average steps in a day is 835, i.e. **the 168th 5min-interval has the most number of steps** with a mean of 206.1698 steps.
 
 ####Imputing missing values
 
 The total number of missing values, `NA`, can be obtained by running the following code chunk
 
-```{r totalnavalues}
+
+```r
 nas <- sum(is.na(activity$steps))
 ```
 
-This gives a total of `r nas` observations in the dataset that have `NA` entries under `steps`.
+This gives a total of 2304 observations in the dataset that have `NA` entries under `steps`.
 
 The idea is to replace the `NA` values with synthetic ones or *estimates*. Since each of the observation indicates a particular interval $i$, we shall replace the `NA` values with the expected number of steps for $i$. 
 
 Below, we create a copy of the original `activity` data frame and call it `activity2`. In this new data frame, we impute the mean values to the `NA` entries under `steps`.
 
-```{r functionNew}
+
+```r
 new <- function(x, y){
     new.steps <- x$steps
     all.nas <- which(is.na(new.steps))
@@ -131,19 +177,42 @@ activity2 <- data.frame(steps = new.steps, date=activity$date, interval=activity
 
 The data frame `activity2` looks:
 
-```{r activity2preview}
+
+```r
 head(activity2)
+```
+
+```
+##     steps       date interval
+## 1 1.71698 2012-10-01        0
+## 2 0.33962 2012-10-01        5
+## 3 0.13208 2012-10-01       10
+## 4 0.15094 2012-10-01       15
+## 5 0.07547 2012-10-01       20
+## 6 2.09434 2012-10-01       25
 ```
 
 Notice the difference with `activity`.
 
-```{r activitypreview}
+
+```r
 head(activity)
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 
 Now, we examine closer `activity2` and compare it with `activity`. First, we take a look at the histogram of the total number of steps per day in `activity2` as we did for the dataset in `activity` above.
 
-```{r totstepsperday2}
+
+```r
 spd.total2 <- aggregate(steps~date, activity2, sum, na.rm=TRUE)
 mean.steps.per.day2 <- mean(spd.total2$steps)
 median.steps.per.day2 <- median(spd.total2$steps)
@@ -152,9 +221,12 @@ ggplot(data=spd.total2, aes(x=steps)) + geom_histogram(binwidth=500) +
     labs(x="Average Total Number of Steps per Day", y ="Frequency")
 ```
 
+![plot of chunk totstepsperday2](figure/totstepsperday2.png) 
+
 To see if there is a significant difference, we overlay the histograms generated for both datasets (`activity` and `activity2`).
 
-```{r overlayinghists}
+
+```r
 p1 <- hist(spd.total$steps, breaks = seq(-250,21750,500), plot = FALSE)
 p2 <- hist(spd.total2$steps, breaks = seq(-250,21750,500), plot = FALSE)
 plot( p1, col=rgb(.1,.1,.1,alpha=0.8), xlim=c(-250,25000), ylim = c(0,12), main = "", 
@@ -162,7 +234,9 @@ plot( p1, col=rgb(.1,.1,.1,alpha=0.8), xlim=c(-250,25000), ylim = c(0,12), main 
 plot( p2, col=rgb(.2,.2,.2,alpha=0.5), xlim=c(-250,25000), ylim = c(0,12), add=T)
 ```
 
-Except for a noticeable spike at around the 23rd bin, there is a very good agreement between the two sets of data. For `activity2`, the mean and median of the number of total steps per day is `r as.integer(mean.steps.per.day2)` and `r  as.integer(median.steps.per.day2)`, respectively. For `activity`, the values are `r  as.integer(mean.steps.per.day)` and `r  as.integer(median.steps.per.day)`, respectively. Results show that by imputing the `NA` values with the average values taken from *typical day* information, 
+![plot of chunk overlayinghists](figure/overlayinghists.png) 
+
+Except for a noticeable spike at around the 23rd bin, there is a very good agreement between the two sets of data. For `activity2`, the mean and median of the number of total steps per day is 10766 and 10766, respectively. For `activity`, the values are 10766 and 10765, respectively. Results show that by imputing the `NA` values with the average values taken from *typical day* information, 
 the mean for the total number of steps per day is retained, while the median is slightly shifted.
 
 ####Weekend vs Weekday Activity Patterns
@@ -188,7 +262,8 @@ As a first step, we convert the `date` column to a date-time format using the pa
 
 The `day.type` variable, on the other hamd tells whether the day is a *Weekend* or a *Weekday*. We implement this in the chunk below
 
-```{r weekdays}
+
+```r
 library(lubridate)
 library(dplyr)
 activity2 <- mutate(activity2, date = ymd(date), weekday = wday(date), 
@@ -200,18 +275,41 @@ activity2 <- mutate(activity2, day.type = as.factor(day.type))
 This is how certian sections of the resulting data frame look like.
 
 **Sample Weekday**
-```{r}
+
+```r
 head(activity2[activity2$day.type=="Weekday",])
 ```
 
+```
+##     steps       date interval weekday day.type
+## 1 1.71698 2012-10-01        0       2  Weekday
+## 2 0.33962 2012-10-01        5       2  Weekday
+## 3 0.13208 2012-10-01       10       2  Weekday
+## 4 0.15094 2012-10-01       15       2  Weekday
+## 5 0.07547 2012-10-01       20       2  Weekday
+## 6 2.09434 2012-10-01       25       2  Weekday
+```
+
 **Sample Weekend**
-```{r}
+
+```r
 tail(activity2[activity2$day.type=="Weekend",])
+```
+
+```
+##       steps       date interval weekday day.type
+## 16123    17 2012-11-25     2330       1  Weekend
+## 16124   176 2012-11-25     2335       1  Weekend
+## 16125    94 2012-11-25     2340       1  Weekend
+## 16126    26 2012-11-25     2345       1  Weekend
+## 16127     0 2012-11-25     2350       1  Weekend
+## 16128     0 2012-11-25     2355       1  Weekend
 ```
 
 Below, we compare the averages taken per 5-minute interval for weekdays and weekends.
 
-```{r}
+
+```r
 steps.per.interval.bydaytype <- aggregate(steps~day.type+interval, activity2, mean, na.rm=TRUE)
 ggplot(steps.per.interval.bydaytype, aes(x=interval, y=steps)) + 
         geom_line(color=rgb(.1,.1,.1)) + 
@@ -220,22 +318,31 @@ ggplot(steps.per.interval.bydaytype, aes(x=interval, y=steps)) +
         theme_bw()
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
 What we observe here is that for weekdays, a prominent peak is present. This suggests the presence of a *routine* wherein there is a significant number of steps involved only at a certain interval of a day on weekdays. This could be due to the fact that the individual is transiting from home to work; and, once the individual reaches his/her office, *relatively* minimal walking as been done.  On weekends, however, the walking is more spread across intervals suggesting the absence of a *routine*. Finally, more steps per day are produced, on the average, on weekends than on weekdays.
 
-```{r}
+
+```r
 temp<-aggregate(steps~day.type+date, activity2, sum)
 temp.mean <- aggregate(steps~day.type, temp, mean)
 temp.median <- aggregate(steps~day.type, temp, median)
 ```
 
 **Mean Total per Day**
-```{r, echo=FALSE}
-temp.mean
+
+```
+##   day.type steps
+## 1  Weekday 10256
+## 2  Weekend 12202
 ```
 
 **Median Total per Day**
-```{r, echo=FALSE}
-temp.mean
+
+```
+##   day.type steps
+## 1  Weekday 10256
+## 2  Weekend 12202
 ```
 
 
