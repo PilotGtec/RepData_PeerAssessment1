@@ -234,7 +234,7 @@ temp.mean
 
 **Median Total per Day**
 ```{r, echo=FALSE}
-temp.mean
+temp.median
 ```
 
 

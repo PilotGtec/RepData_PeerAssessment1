@@ -340,8 +340,8 @@ temp.median <- aggregate(steps~day.type, temp, median)
 
 ```
 ##   day.type steps
-## 1  Weekday 10256
-## 2  Weekend 12202
+## 1  Weekday 10765
+## 2  Weekend 11646
 ```
 
 
