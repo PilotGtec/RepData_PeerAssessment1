@@ -1,6 +1,6 @@
 ---
 title: "Reproducible Research - Peer Assessment 1"
-author: "Pilot Gtec"
+author: "Pilot Gtec EFTL"
 date: "17 October, 2014"
 output: html_document
 ---
@@ -20,23 +20,19 @@ library(knitr)
 opts_chunk$set(echo = TRUE, results = 'hold', message = FALSE, warning = FALSE)
 ```
 
-##Data
+##Data Analysis
 Here, we work with the [Activity monitoring data][3] provided in the course.
 
 [3]: https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip "Activity monitoring data" 
 
-####Loading Data
-In this section, we load the raw *Activity Monitoring Data*. The dataset has been downloaded and unzipped and is located in the same location as this **R markdown (.Rmd)** file. Note that for loading the data, the chunk option `cache = TRUE`.
+###Reading the Data
+In this section, we load and read the raw *Activity Monitoring Data*. The dataset has been downloaded and unzipped and is located in the same location as this **R markdown (.Rmd)** file. Note that for loading the data, the chunk option `cache = TRUE`.
 
 
 ```r
 fileName <- "activity.csv"
 activity <- read.csv(fileName)
 ```
- 
-
-##Data Analysis
-
 
 Taking a peek at the data set, we have
 
@@ -75,7 +71,7 @@ summary(activity)
 ```
 
 
-####Mean total number of steps taken per day
+###Mean total number of steps taken per day
 
 To obtain the mean total number of steps taken per day, we first sum up all the steps per day and store the results in `spd.total`. 
 
@@ -103,10 +99,9 @@ mean.steps.per.day <- mean(spd.total$steps)
 median.steps.per.day <- median(spd.total$steps)
 ```
 
-This gives us the *mean total number of steps taken per day*, which is 10766. The median is 
-10765.
+This gives us the **mean total number of steps taken per day**, which is 10766. The **median** is 10765.
 
-**Histogram**
+####Histogram
 
 Below, we plot the histogram of the total number of steps per day.
 
@@ -121,7 +116,7 @@ ggplot(data=spd.total, aes(x=steps)) + geom_histogram(binwidth=500) +
 ![plot of chunk histogramsteps](figure/histogramsteps.png) 
 
 
-####Average Daily Activity Pattern
+###Average Daily Activity Pattern
 
 In this section, we evaluate the average daily activity pattern of the subject by looking at the mean number of steps produced in each of the 5-min interval across the days. To do this, we aggregate the dataset per interval and take the mean of the steps per interval. We then plot the mean values per interval.
 
@@ -141,7 +136,7 @@ To evaluate the $n$th interval at which a maximum is observed, the following is 
 interval.with.max.steps <- steps.per.interval[which.max(steps.per.interval$steps),]$interval
 ```
 
-The interval with the maximum number of average steps in a day is 835, i.e. **the 168th 5min-interval has the most number of steps** with a mean of 206.1698 steps.
+The interval with the maximum number of average steps in a day is the **835th** with a mean of 206.1698 steps.
 
 ####Imputing missing values
 
@@ -238,7 +233,7 @@ plot( p2, col=rgb(.2,.2,.2,alpha=0.5), xlim=c(-250,25000), ylim = c(0,12), add=T
 
 Except for a noticeable spike at around the 23rd bin in the `activity2` histogram (lighter gray), there is a very good agreement between the two sets of data. For `activity2`, the mean and median of the number of total steps per day is 10766 and 10766, respectively. For `activity`, the values are 10766 and 10765, respectively. Results show that by imputing the average values taken from *typical day* information with the `NA` values, the mean for the total number of steps per day is retained, while the median is slightly shifted.
 
-####Weekend vs Weekday Activity Patterns
+###Weekend vs Weekday Activity Patterns
 
 In this section, we are interested in contrasting the activity patterns of the individual on weekdays and weekends.
 We will be utilizing `activity2` for this investigation-- the set where *estimates* were imputed to the `NA` values. 
